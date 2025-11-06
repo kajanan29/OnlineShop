@@ -10,6 +10,7 @@ const checkAuthStatusMiddleware=require('./middleware/check-auth');
 const authRoutes=require('./routes/auth-routes');
 const baseRoutes=require('./routes/base-routes');
 const productsRoutes=require('./routes/products-routes');
+const adminRoutes=require('./routes/admin-routes');
 
 const app=express();
 
@@ -24,6 +25,12 @@ app.use(express.static('public'));
 
 const sessionConfig=createSessionConfig();
 app.use(expressSession(sessionConfig));
+app.use((req, res, next) => {
+  res.locals.isAuth = req.session ? req.session.isAuth : false;
+  next();
+});
+
+
 
 
 app.use(express.urlencoded({extended:false}));
@@ -36,6 +43,7 @@ app.use(checkAuthStatusMiddleware);
 app.use(authRoutes);
 app.use(baseRoutes);
 app.use(productsRoutes);
+app.use('/admin',adminRoutes);
 app.use(errorHandlerMiddleware);
 
 db.connectToDatabase().then(function(){
