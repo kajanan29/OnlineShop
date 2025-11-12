@@ -1,30 +1,30 @@
-const expressSession=require('express-session');
+const expressSession = require("express-session");
 
-const mongoDbStore=require('connect-mongodb-session');
-const { Cookie } = require('express-session');
+const mongoDbStore = require("connect-mongodb-session");
+const { Cookie } = require("express-session");
 
-function createSessionStore(){
-    const MongoDbStore=mongoDbStore(expressSession  );
+function createSessionStore() {
+  const MongoDbStore = mongoDbStore(expressSession);
 
-   const store= new MongoDbStore({
-        uri:'mongodb://localhost:27017',
-        databaseName:'online-shop',
-        collection:'sessions'
-    });
+  const store = new MongoDbStore({
+    uri: "mongodb://localhost:27017",
+    databaseName: "online-shop",
+    collection: "sessions",
+  });
 
-    return store;
+  return store;
 }
 
-function createSessionConfig(){
-    return{
-        secret:'something',
-        resave:false,
-        saveUninitialized:false,
-        store:createSessionStore(),
-        cookie:{
-            maxAge:2*24*60*60*1000
-        }
-    };
+function createSessionConfig() {
+  return {
+    secret: "something",
+    resave: false,
+    saveUninitialized: false,
+    store: createSessionStore(),
+    cookie: {
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    },
+  };
 }
 
-module.exports=createSessionConfig;
+module.exports = createSessionConfig;
