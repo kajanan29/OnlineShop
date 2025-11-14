@@ -11,7 +11,9 @@ const authRoutes=require('./routes/auth-routes');
 const baseRoutes=require('./routes/base-routes');
 const productsRoutes=require('./routes/products-routes');
 const adminRoutes=require('./routes/admin-routes');
+const cartRoutes=require('./routes/cart-routes');
 const protectRoutesMiddleware=require('./middleware/protect-routes');
+const cartMiddleware=require('./middleware/cart');
 
 const app=express();
 
@@ -26,6 +28,7 @@ app.use(express.static('public'));
 app.use('/products/assets',express.static('product-data'));
 
 
+
 const sessionConfig=createSessionConfig();
 app.use(expressSession(sessionConfig));
 app.use((req, res, next) => {
@@ -37,6 +40,8 @@ app.use((req, res, next) => {
 
 
 app.use(express.urlencoded({extended:false}));
+app.use(express.json());
+app.use(cartMiddleware);
 app.use(csrf());
 
 app.use(addCsrfTokenMiddleware);
@@ -46,9 +51,11 @@ app.use(checkAuthStatusMiddleware);
 app.use(authRoutes);
 app.use(baseRoutes);
 app.use(productsRoutes);
+app.use('/cart',cartRoutes);
 app.use(protectRoutesMiddleware);
 app.use('/admin',adminRoutes);
 app.use(errorHandlerMiddleware);
+
 
 db.connectToDatabase().then(function(){
    app.listen(3000);
